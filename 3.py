@@ -138,9 +138,11 @@ def usage_demo():
     ses_identity = SesIdentity(ses_client)
     ses_mail_sender = SesMailSender(ses_client)
     ses_template = SesTemplate(ses_client)
-    email = input("Enter an email address to send mail with Amazon SES: ")
+    email = input("Enter an email address to receive mail with Amazon SES: ")
+    email_server = "ntutlab321projects@gmail.com" 
     status = ses_identity.get_identity_status(email)
     verified = status == "Success"
+    
     #判斷郵件是否經ses驗證
     if not verified:
         answer = input(
@@ -166,9 +168,9 @@ def usage_demo():
         test_message_text = "Hello from the Amazon SES mail demo!"
         test_message_html = "<p>Hello!</p><p>From the <b>Amazon SES</b> mail demo!</p>"
 
-        print(f"Sending mail from {email} to {email}.")
+        print(f"Sending mail from {email_server} to {email}.")
         ses_mail_sender.send_email(
-            email,
+            email_server,
             SesDestination([email]),
             "Amazon SES demo",
             test_message_text,
@@ -187,7 +189,7 @@ def usage_demo():
         template_data = {"name": email.split("@")[0], "action": "read"}
         if ses_template.verify_tags(template_data):
             ses_mail_sender.send_templated_email(
-                email, SesDestination([email]), ses_template.name(), template_data
+                email_server, SesDestination([email]), ses_template.name(), template_data
             )
             input("Mail sent. Check your inbox and press Enter to continue.")
 
@@ -200,7 +202,7 @@ def usage_demo():
             with smtplib.SMTP(smtp_server, port) as server:
                 server.starttls(context=context)
                 server.login(smtp_username, smtp_password)
-                server.sendmail(email, email, message)
+                server.sendmail(email_server, email, message)
             print("Mail sent. Check your inbox!")
         except smtplib.SMTPAuthenticationError as e:
             print(f"Error sending email through SMTP: {e}")
